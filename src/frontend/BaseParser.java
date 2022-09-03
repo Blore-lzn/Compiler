@@ -139,12 +139,22 @@ public class BaseParser {
         }
     }
     
+    public HashSet<String> getFirstSetOfStrings(ArrayList<String> symbols) {
+        HashSet<String> res = new HashSet<>();
+        for (String s : symbols) {
+            res.addAll(firstSet.get(s));
+            if (!firstSet.get(s).contains(EPS)) {
+                break;
+            }
+        }
+        return res;
+    }
+    
     public void generateFirstPlusSet() {
         for (Production p : grammar.prods) {
             if (!p.rights.isEmpty()) {
-                String b = p.rights.get(0);
-                HashSet<String> newFirstPlusSet = new HashSet<>(firstSet.get(b));
-                if (!firstSet.get(b).contains(EPS)) {
+                HashSet<String> newFirstPlusSet = getFirstSetOfStrings(p.rights);
+                if (!newFirstPlusSet.contains(EPS)) {
                     firstPlusSet.put(p, newFirstPlusSet);
                 } else {
                     newFirstPlusSet.addAll(followSet.get(p.left));

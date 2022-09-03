@@ -5,6 +5,7 @@ import frontend.BaseParser;
 import frontend.Lexer;
 import gui.Table;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Stack;
@@ -81,5 +82,26 @@ public class LL1Parser extends BaseParser {
         }
         Table table = new Table("LL(1)表");
         table.show("LL(1)表", data, columnNames);
+    }
+    
+    /**
+     * 测试
+     */
+    public static void main(String[] args) {
+        Lexer lexer = new Lexer("1+2*(3+5)");
+        
+        LL1Parser parser = new LL1Parser(lexer);
+        try {
+            parser.initGrammar("src/frontend/ExprGrammar.g4");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        parser.generateFirstSet();
+        parser.generateFollowSet();
+        parser.generateFirstPlusSet();
+        parser.makeTable();
+        parser.printTable();
+        System.out.println(parser.parse());
+        System.out.println("@ver");
     }
 }
