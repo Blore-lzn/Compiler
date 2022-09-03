@@ -47,7 +47,8 @@ public class BaseParser {
                     tmp = tmp.substring(2);
                 }
                 String[] rights = tmp.split(" ");
-                grammar.prods.add(new Production(left, rights));
+                grammar.addProduction(new Production(left, rights));
+                
             }
         }
         // 构造非终结符和终结符集合
@@ -188,6 +189,24 @@ public class BaseParser {
         }
         
         @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Production that = (Production) o;
+            return handler == that.handler && Objects.equals(left, that.left) &&
+                Objects.equals(rights, that.rights);
+        }
+        
+        @Override
+        public int hashCode() {
+            return Objects.hash(left, rights, handler);
+        }
+        
+        @Override
         public String toString() {
             return left + " -> " + rights;
         }
@@ -200,6 +219,13 @@ public class BaseParser {
         public final ArrayList<String> T = new ArrayList<>();   // 终结符
         public final ArrayList<String> NT = new ArrayList<>();   // 非终结符
         public final ArrayList<Production> prods = new ArrayList<>();  //产生式
+        public final HashMap<String, ArrayList<Production>> nt2prods = new HashMap<>();
+        
+        public void addProduction(Production p) {
+            prods.add(p);
+            nt2prods.computeIfAbsent(p.left, k -> new ArrayList<>());
+            nt2prods.get(p.left).add(p);
+        }
         
         @Override
         public String toString() {

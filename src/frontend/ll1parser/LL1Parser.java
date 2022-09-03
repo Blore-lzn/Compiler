@@ -92,7 +92,7 @@ public class LL1Parser extends BaseParser {
         
         LL1Parser parser = new LL1Parser(lexer);
         try {
-            parser.initGrammar("src/frontend/ExprGrammar.g4");
+            parser.initGrammar("src/frontend/ExprGrammar.g");
         } catch (IOException e) {
             e.printStackTrace();
         }
