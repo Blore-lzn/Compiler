@@ -283,8 +283,6 @@ public class LR1Parser extends BaseParser {
             e.printStackTrace();
         }
         parser.generateFirstSet();
-        parser.generateFollowSet();
-        parser.generateFirstPlusSet();
         parser.makeCCSets();
         parser.makeTable();
         System.out.println(parser.parse());
