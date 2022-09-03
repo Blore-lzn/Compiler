@@ -1,7 +1,7 @@
 package frontend;
 
 public class Lexer {
-    private String input;
+    private final String input;
     private int ptr = -1;
     private Symbol sym;
     private StringBuilder token;
@@ -10,13 +10,13 @@ public class Lexer {
         this.input = input;
     }
     
-    public void nextToken() {
+    public String nextToken() {
         clearToken();
         do {
             getchar();
             if (isEOF()) {
                 sym = Symbol.EOF;
-                return;
+                return getSym().name;
             }
         } while (isSpace());
         
@@ -78,7 +78,7 @@ public class Lexer {
                         getchar();
                         if (isDiv()) {
                             sym = Symbol.COMMENT;
-                            return;
+                            return getSym().name;
                         }
                     } while (isStar());
                 }
@@ -88,6 +88,7 @@ public class Lexer {
         } else {
             sym = Symbol.INVALID;
         }
+        return getSym().name;
     }
     
     public int getPtr() {

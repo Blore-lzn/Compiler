@@ -14,14 +14,19 @@ import java.util.Objects;
  * 构建FIRST集和FOLLOW集合
  */
 public class BaseParser {
-    private final HashMap<String, HashSet<String>> firstSet = new HashMap<>();
-    private final HashMap<String, HashSet<String>> followSet = new HashMap<>();
-    private final HashMap<Production, HashSet<String>> firstPlusSet = new HashMap<>();
-    private final Grammar grammar = new Grammar();
+    protected final HashMap<String, HashSet<String>> firstSet = new HashMap<>();
+    protected final HashMap<String, HashSet<String>> followSet = new HashMap<>();
+    protected final HashMap<Production, HashSet<String>> firstPlusSet = new HashMap<>();
+    protected final Grammar grammar = new Grammar();
+    protected final Lexer lexer;
     
-    private static final String S = "Goal"; // 标识符
-    private static final String EOF = "EOF"; // 结束符
-    private static final String EPS = "eps"; // 空串
+    protected static final String S = "Goal"; // 标识符
+    protected static final String EOF = "EOF"; // 结束符
+    protected static final String EPS = "eps"; // 空串
+    
+    public BaseParser(Lexer lexer) {
+        this.lexer = lexer;
+    }
     
     public void initGrammar(String grammarFilePath) throws IOException {
         FileInputStream file = new FileInputStream(grammarFilePath);
@@ -136,7 +141,7 @@ public class BaseParser {
     
     public void generateFirstPlusSet() {
         for (Production p : grammar.prods) {
-            if (p.rights.size() == 1) {
+            if (!p.rights.isEmpty()) {
                 String b = p.rights.get(0);
                 HashSet<String> newFirstPlusSet = new HashSet<>(firstSet.get(b));
                 if (!firstSet.get(b).contains(EPS)) {
@@ -149,33 +154,50 @@ public class BaseParser {
         }
     }
     
-    private boolean isT(String s) {
+    public boolean isT(String s) {
         return grammar.T.contains(s);
     }
     
-    private boolean isNT(String s) {
+    public boolean isNT(String s) {
         return grammar.NT.contains(s);
     }
     
     /**
      * 产生式
      */
-    static class Production {
-        private final String left; // 左部符号
-        private final ArrayList<String> rights = new ArrayList<>();  // 右部符号串
+    public static class Production {
+        public final String left; // 左部符号
+        public final ArrayList<String> rights = new ArrayList<>();  // 右部符号串
+        public final int handler;
+        private static int HANDLER = 0;
         
         public Production(String left, String[] rights) {
             this.left = left;
             this.rights.addAll(Arrays.asList(rights));
+            this.handler = HANDLER++;
+        }
+        
+        @Override
+        public String toString() {
+            return left + " -> " + rights;
         }
     }
     
     /**
      * 文法
      */
-    static class Grammar {
-        private final ArrayList<String> T = new ArrayList<>();   // 终结符
-        private final ArrayList<String> NT = new ArrayList<>();   // 非终结符
-        private final ArrayList<Production> prods = new ArrayList<>();  //产生式
+    public static class Grammar {
+        public final ArrayList<String> T = new ArrayList<>();   // 终结符
+        public final ArrayList<String> NT = new ArrayList<>();   // 非终结符
+        public final ArrayList<Production> prods = new ArrayList<>();  //产生式
+        
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            for (Production p : prods) {
+                sb.append(p.toString()).append("\n");
+            }
+            return sb.toString();
+        }
     }
 }

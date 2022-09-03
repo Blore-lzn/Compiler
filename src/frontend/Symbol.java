@@ -1,8 +1,8 @@
 package frontend;
 
 public enum Symbol {
-    IDSY,   // 标识符
-    INTSY,
+    IDSY("name"),   // 标识符
+    INTSY("num"),   // 数字
     
     EQ,
     NE,
@@ -11,15 +11,15 @@ public enum Symbol {
     GE,
     GT,
     
-    LPAREN,
-    RPAREN,
+    LPAREN("("),
+    RPAREN(")"),
     LBRACKT,
     RBRACKT,
     
-    ADD,
-    SUB,
-    STAR,
-    DIV,
+    ADD("+"),
+    SUB("-"),
+    STAR("*"),
+    DIV("/"),
     MOD,
     
     COMMENT,
@@ -27,5 +27,14 @@ public enum Symbol {
     SEMI,
     
     INVALID,
-    EOF
+    EOF("EOF");
+    public final String name;
+    
+    Symbol(String name) {
+        this.name = name;
+    }
+    
+    Symbol() {
+        this.name = null;
+    }
 }
