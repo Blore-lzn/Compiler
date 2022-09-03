@@ -18,6 +18,9 @@ public class LL1Parser extends BaseParser {
     }
     
     public void makeTable() {
+        generateFirstSet();
+        generateFollowSet();
+        generateFirstPlusSet();
         for (Production p : grammar.prods) {
             firstPlusSet.get(p).stream().filter(this::isT)
                 .forEach(w -> table.put(new Pair<>(p.left, w), p));
@@ -34,9 +37,9 @@ public class LL1Parser extends BaseParser {
         st.push(S);
         String focus = st.peek();
         while (true) {
-            if (focus.equals("EOF") && word.equals("EOF")) {
+            if (focus.equals(EOF) && word.equals(EOF)) {
                 return true;
-            } else if (isT(focus) || focus.equals("EOF")) {
+            } else if (isT(focus) || focus.equals(EOF)) {
                 if (Objects.equals(focus, word)) {
                     st.pop();
                     word = lexer.nextToken();

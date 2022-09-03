@@ -142,7 +142,7 @@ public class LR1Parser extends BaseParser {
                     actionMap.put(new Pair<>(cc, item.next),
                         new Pair<>(REDUCE, item.p));
                 }
-                // 原文算法有问题？
+                // 原文伪代码为else if
                 if (item.isFinal()) {
                     actionMap.put(new Pair<>(cc, EOF),
                         new Pair<>(ACCEPTED, null));
