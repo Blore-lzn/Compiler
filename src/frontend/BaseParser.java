@@ -152,6 +152,7 @@ public class BaseParser {
     }
     
     public void generateFirstPlusSet() {
+        firstPlusSet.clear();
         for (Production p : grammar.prods) {
             if (!p.rights.isEmpty()) {
                 HashSet<String> newFirstPlusSet = getFirstSetOfStrings(p.rights);
