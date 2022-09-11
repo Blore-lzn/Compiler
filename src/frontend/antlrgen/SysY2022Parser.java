@@ -3,6 +3,8 @@ import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
@@ -409,6 +411,7 @@ public class SysY2022Parser extends Parser {
 	}
 
 	public static class ConstInitValContext extends ParserRuleContext {
+		public ArrayList<Integer> dimInfo;
 		public ConstExpContext constExp() {
 			return getRuleContext(ConstExpContext.class,0);
 		}

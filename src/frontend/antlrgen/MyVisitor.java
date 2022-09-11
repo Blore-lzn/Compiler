@@ -28,7 +28,7 @@ public class MyVisitor extends SysY2022BaseVisitor<Void> {
     private Value curValue = null;
     
     private ArrayList<Value> curArray = null;
-    private ArrayList<Integer> curArrayDims = null;
+//    private ArrayList<Integer> curArrayDims = null;
     
     private boolean isGlobalInit = false;
     
@@ -157,16 +157,16 @@ public class MyVisitor extends SysY2022BaseVisitor<Void> {
                 scope.put(ident, curValue);
             }
         } else {
-            curArrayDims = new ArrayList<>();
+            var dims = new ArrayList<Integer>();
             ctx.constExp().forEach(context -> {
                 visit(context);
-                curArrayDims.add(((ConstantInteger) curValue).getValue());
+                dims.add(((ConstantInteger) curValue).getValue());
             });
             
             // 递归构造数组
             Type arrType = IntegerType.i32;
-            for (var i = curArrayDims.size(); i > 0; i--) {
-                arrType = new ArrayType(arrType, curArrayDims.get(i - 1));
+            for (var i = dims.size(); i > 0; i--) {
+                arrType = new ArrayType(arrType, dims.get(i - 1));
             }
             
             if (scope.isGlobal()) {
@@ -197,7 +197,7 @@ public class MyVisitor extends SysY2022BaseVisitor<Void> {
                         add(ConstantInteger.const0);
                         add(ConstantInteger.const0);
                     }}, curBlock);
-                    for (int i = 1; i < curArrayDims.size(); i++) {
+                    for (int i = 1; i < ctx.constInitVal().dimInfo.size(); i++) {
                         ptr = factory.buildGEP(ptr, new ArrayList<>() {{
                             add(ConstantInteger.const0);
                             add(ConstantInteger.const0);
@@ -221,8 +221,43 @@ public class MyVisitor extends SysY2022BaseVisitor<Void> {
         return null;
     }
     
+    /*constInitVal:
+    constExp
+        | (LBRACE (constInitVal (COMMA constInitVal)*)? RBRACE)
+    ;*/
     @Override
     public Void visitConstInitVal(SysY2022Parser.ConstInitValContext ctx) {
+        if ((ctx.constExp() != null) && ctx.dimInfo == null) {
+            visit(ctx.constExp());//非数组形式变量的初始化
+        } else {
+            var curDimLength = ctx.dimInfo.get(0);
+            var sizeOfEachEle = 1;//每个元素（i32或者是数组）的长度
+            var arrOfCurDim = new ArrayList<Value>();//
+            //calculate Size of Ele in cur dim
+            for (int i = 1; i < ctx.dimInfo.size(); i++) {
+                sizeOfEachEle *= ctx.dimInfo.get(i);
+            }
+            //recursively init each dim
+            for (SysY2022Parser.ConstInitValContext constInitValContext : ctx.constInitVal()) {
+                if (constInitValContext.constExp() == null) {
+                    var pos = arrOfCurDim.size();
+                    for (int i = 0; i < (sizeOfEachEle - (pos % sizeOfEachEle)) % sizeOfEachEle; i++) {
+                        arrOfCurDim.add(ConstantInteger.const0);
+                    }
+                    constInitValContext.dimInfo = new ArrayList<>(ctx.dimInfo.subList(1, ctx.dimInfo.size()));
+                    visit(constInitValContext);
+                    arrOfCurDim.addAll(curArray);
+                } else {
+                    visit(constInitValContext);
+                    arrOfCurDim.add(curValue);
+                }
+            }
+            for (int i = arrOfCurDim.size(); i < curDimLength * sizeOfEachEle; i++) {
+                arrOfCurDim.add(ConstantInteger.const0);
+            }//长度不足一个ele*dimsize 的补0
+            curArray = arrOfCurDim;
+        }
+        
         return null;
     }
     
