@@ -1,8 +1,8 @@
-package frontend.ll1parser;
+package frontend.myparser.ll1parser;
 
 import adt.Pair;
-import frontend.BaseParser;
-import frontend.Lexer;
+import frontend.myparser.BaseParser;
+import frontend.myparser.Lexer;
 import gui.Table;
 
 import java.io.IOException;

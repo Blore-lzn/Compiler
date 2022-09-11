@@ -1,8 +1,8 @@
-package frontend.lr1parser;
+package frontend.myparser.lr1parser;
 
 import adt.Pair;
-import frontend.BaseParser;
-import frontend.Lexer;
+import frontend.myparser.BaseParser;
+import frontend.myparser.Lexer;
 
 import java.io.IOException;
 import java.util.ArrayList;

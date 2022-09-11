@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public abstract class Value {
     private final IRModule module = IRModule.getInstance();
-    private String name;
-    private Type type;
+    protected String name;
+    protected Type type;
     private final ArrayList<Use> usesList = new ArrayList<>();
     
     public Value(String name, Type type) {

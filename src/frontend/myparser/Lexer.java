@@ -1,4 +1,4 @@
-package frontend;
+package frontend.myparser;
 
 public class Lexer {
     private final String input;

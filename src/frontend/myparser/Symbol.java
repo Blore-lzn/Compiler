@@ -1,4 +1,4 @@
-package frontend;
+package frontend.myparser;
 
 public enum Symbol {
     IDSY("name"),   // 标识符
